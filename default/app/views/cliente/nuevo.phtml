@@ -1,0 +1,101 @@
+<?echo View::content();?>
+<div class="container">
+  <h3>Cree un nuevo registro</h3>
+
+  <br><br>
+
+  <?php echo Form::open("", "POST") ?>
+    <div class="form-group">
+      <label>NIT O CEDULA</label>
+      <?php echo Form::text('cliente.nit', "class='form-control' required", $cliente->nit) ?>
+    </div>
+  
+    <div class="form-group">
+      <label>TIPO CLIENTE</label>
+      <?php echo Form::dbSelect('cliente.tipocliente_id', 'nombre', null, 'Seleccione el tipo de cliente', "class='form-control' required", $cliente->tipocliente_id ) ?>
+    </div>
+    <div class="form-group">
+      <label>NOMBRE DE LA RAZON SOCIAL</label>
+      <?php echo Form::text('cliente.nombre', "class='form-control'", $cliente->nombre) ?>
+    </div>
+  
+    <div class="form-group">
+      <label>DIRECCIÓN</label>
+      <?php echo Form::text('cliente.direccion', "class='form-control'", $cliente->direccion) ?>
+    </div>
+  
+    <div class="form-group">
+      <label>NOMBRE DEL REPRESENTANTE LEGAL</label>
+      <?php echo Form::text('cliente.nombre_representante_legal', "class='form-control'", $cliente->nombre_representante_legal) ?>
+    </div>
+  
+    <div class="form-group">
+      <label>TELEFONO LOCAL</label>
+      <?php echo Form::text('cliente.telefono', "class='form-control'", $cliente->telefono) ?>
+    </div>
+  
+    <div class="form-group">
+      <label>CELULAR</label>
+      <?php echo Form::text('cliente.celular', "class='form-control'", $cliente->celular) ?>
+    </div>
+  
+    <div class="form-group">
+      <label>CORREO ELECTRONICO</label>
+      <?php echo Form::email('cliente.correo_electronico', "class='form-control'", $cliente->correo_electronico) ?>
+    </div>
+  
+    <div class="form-group">
+      <label>DEPARTAMENTO</label>
+      <?php echo Form::dbSelect('cliente.tipodepartamento_id', 'nombre', null, 'Seleccione el departamento', "class='form-control' required", $cliente->tipodepartamento_id ) ?>
+    </div>
+    <div class="form-group" id="municipio-container">
+      <?php
+        View::partial(
+          'municipio/municipio_list',
+          FALSE,
+          array(
+            'municipios'   => null,
+            'cliente'      => null
+            )
+        )
+      ?>
+    </div>
+  
+    <div class="form-group">
+      <label>ESTADO DEL CLIENTE</label>
+      <?php
+        $ar2 = array('1 '=>'ACTIVO','0'=>'INACTIVO');
+        echo Form::Select('cliente.activo', $ar2, "class='form-control'",$cliente->activo);
+       ?>
+      
+    </div>
+  
+
+
+    <div class="form-group text-right">
+      <input type="submit" value="Crear" class="btn btn-primary">
+      <a href="<?php echo PUBLIC_PATH?>cliente/index" class="btn btn-default">Volver</a>
+    </div>
+  <?php echo Form::close() ?>
+</div>
+
+<script>
+  $(function() {
+    $('#cliente_tipodepartamento_id').change(function() {
+      var cbo = $(this);
+
+      $.ajax({
+        url: '<?php echo PUBLIC_PATH ?>cliente/filtrar_municipios/'+cbo.val(),
+        /*data: {
+          tipodepartamento_id: cbo.val()
+        },*/
+        success: function(result) {
+          $('#municipio-container').html(result);
+        },
+        error: function(error) {
+          alert(error);
+        }
+      });
+    });
+  });
+</script>

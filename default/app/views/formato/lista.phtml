@@ -1,0 +1,90 @@
+<style>
+    .estadof{
+        color: red;
+    }
+
+    .estadov{
+        color: green;
+    }
+
+</style>
+<div class="container">
+    <article class="panel panel-primary">
+        <header class="panel-heading">
+            <h4 class="panel-title">Formatos ingresados</h4>
+        </header>
+        <section class="panel-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Fecha Emision</th>
+                        <th>Códigos de muestra</th>
+                        <!--<th>Tomador Muestra</th>-->
+                        <th>Lugar toma</th>
+                        <!--<th>Cliente</th>-->
+                        <th>Estado</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($formatos as $formato): ?>
+                        <tr>
+                            <td><?php echo $formato->codigoinformeleyenda . " " . $formato->codigoinformeano . "-" . $formato->codigoinformesecuencial ?></td>
+                            <td><?php echo $formato->fechaemision ?></td>
+                            <td>
+                                <?
+                                $m = new Muestra();
+                                $arrmuestra = array();
+                                $arrmuestra = $m->find("formato_id=" . $formato->id);
+                                $cad = "";
+                                foreach ($arrmuestra as $xmuestra) {
+                                    $cad.=$xmuestra->codigomuestra . "," . "\r\n";
+                                }
+                                echo $cad;
+                                ?>
+                            </td>
+                            <!--<td><?php //echo $formato->getTomadormuestra()->nombre  ?></td>-->
+                            <td><?php echo $formato->lugartomamuestra ?></td>
+                            <!--<td><?php //echo $formato->getCliente()->nombre  ?></td>-->
+                            <td >
+                                <?php
+                                if ($formato->cerrado == "S") {
+                                    echo "<label class='estadof'>CERRADO</label>";
+                                } else {
+                                    echo "<label class='estadov'>ABIERTO</label>";
+                                }
+                                ?>
+                            </td>
+
+                            <td>
+
+                                <? echo Html::link("formato/modificar/$formato->id", "", "class='btn btn-success glyphicon glyphicon-pencil'") ?>
+
+                                <?
+                                $t = new Tomadormuestraaccion();
+                                $at = array();
+                                $at = $t->find('formato_id=' . $formato->id);
+                                foreach ($at as $atobj) {
+                                    if ($atobj->usuario_id == $user->id) {
+                                        if ($atobj->tipoaccion_id == 1) {
+                                            ?>
+
+                                            <? echo Html::link("formato/cerrarformato/$formato->id", "", "class='btn btn-success glyphicon glyphicon-inbox'") ?>
+                                        <?
+                                        }
+                                    }
+                                }
+                                ?>
+
+
+                        
+
+                            </td>
+                        </tr>
+<?php endforeach ?>
+                </tbody>
+            </table>
+        </section>
+    </article>
+</div>

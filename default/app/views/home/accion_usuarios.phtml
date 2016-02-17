@@ -1,0 +1,68 @@
+<? echo View::content() ?>
+
+
+<div class="container-fluid">
+
+
+    <div class="col-sm-12 center-block" style="margin-left: 0%;">
+
+        <!-- datos del estudiante -->
+
+        <div class="panel panel-default panelIndex">
+            <div class="panel-heading titulopanelIndex">
+                <h3 class="panel-title centrar">Agregar acciones de usuarios</h3>
+            </div>
+            <?echo Form::open()?>
+            <div class="panel-body" id="editarusuario">
+                <div class="col-sm-12">
+                    Tomador muestra: 
+                    <? echo Form::dbSelect("usuario.usuario_id", "nombrecompleto", array("usuario","getUsuarioTomador"), "Seleccione", "class='combosGeneral' ") ?>
+                    Tipo acción:
+                    <? echo Form::dbSelect("tipoaccion.tipoaccion_id", "nombre", null, "Seleccione", "class='combosGeneral' ") ?>
+                    <br><br>
+                        <? echo Form::submit("Agregar","class='btn btn-default btn-sm'")?>
+                     <? echo Html::linkAction("cabecerag/$formato_id", "Continuar", "class='btn btn-default btn-sm'") ?>
+                </div>
+
+            </div>
+            <?echo Form::close()?>
+
+            <div class="panel-body" id="editarusuario">
+                <table style="width: 100%">
+                    <tr style="background-color: #A5D6A7">
+                    <th class="thTablasTituloIndex">Usuario</th>
+                    <th class="thTablasTituloIndex">Acción</th>
+                    <th class="thTablasTituloIndex">Opciones</th>
+                    </tr>
+                    <tbody>
+                        <?foreach($arr as $o){?>
+                        <tr>
+                            <td class="thTablasVerdes"><?
+                            $tom = new Usuario();
+                            $tom = $tom->find_first($o->usuario_id);
+                            echo $tom->nombrecompleto;
+                            
+                            ?></td> 
+                            <td class="thTablasVerdes">
+                                <?$ac = new Tipoaccion();
+                                $ac = $ac->find_first($o->tipoaccion_id);
+                                echo $ac->nombre;
+                                ?>
+                            </td>
+                            <td class="thTablasVerdes">
+                                <? echo Html::linkAction("accion_usuarios_eliminar/$formato_id/$o->id", "Eliminar", "class='btn btn-default btn-sm'") ?>
+                            </td>
+                        </tr>
+                        <?}?>
+                    </tbody>
+                </table>         
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
