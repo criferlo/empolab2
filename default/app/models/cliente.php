@@ -16,6 +16,6 @@ class Cliente extends ActiveRecord {
     protected function initialize()
     {
       $this->belongs_to('tipocliente');
-      $this->belongs_to('tipomunicipio');
+      $this->belongs_to('Tipomunicipio');
     }
 }
