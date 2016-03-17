@@ -486,7 +486,6 @@ class FormatoController extends AppController
         $this->tipoReporte = 1;
         $this->titulo      = "Reporte promedio mes";
     }
-
     public function reporte_sui()
     {
         $curYear = date('Y');
@@ -528,7 +527,7 @@ class FormatoController extends AppController
             $fechaini = "$year-".(strlen("0".$month)   > 2 ? $month   : "0".$month)."-01";
             $fechafin = "$year-".(strlen("0".$month+1) > 2 ? $month+1 : "0".($month+1))."-01";
 
-            $this->formatos = Load::model('formato')->find("tipocliente_id=1 AND fechaemision>=$fechaini AND fechaemision<$fechafin");
+            $this->formatos = Load::model('formato')->find("tipocliente_id=1 AND fechaemision>='$fechaini' AND fechaemision<'$fechafin' AND cerrado='S'");
         }
     }
     

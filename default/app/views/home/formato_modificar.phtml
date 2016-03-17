@@ -45,12 +45,16 @@
             <tr>
                 <th class="columnasTablaTitulos">FECHA EMISION INFORME:</th>
                 <th class="columnasTablaContenido">
-                    <? echo Form::text("fechaemision", "class='calendarios'") ?>
+                    
+                    <? 
+                   
+                    
+                    echo Form::date("fechaemision", "", $for->fechaemision) ?>
 
                 </th>
                 <th class="columnasTablaTitulos">CODIGO DEL INFORME</th>
                 <th class="columnasTablaContenido">
-                    <? echo $codigoinforme ?>
+                    <? echo $for->codigoinformeleyenda."-".$for->codigoinformeano."-".$for->codigoinformesecuencial ?>
                 </th>
 
             </tr>
@@ -60,11 +64,25 @@
                 <th class="columnasTablaContenido">
                     <?php echo Form::hidden("cliente.cliente_id") ?>
                     <?php echo Form::hidden("tipocliente_id") ?>
-                    <?php echo Form::text("cliente_auto_field", "class='combosGeneral' required") ?>
+                    <?php 
+                    $cli = new Cliente();
+                    $cli = $cli->find_first($for->cliente_id);
+                    echo Form::text("cliente_auto_field", "class='combosGeneral' required", $cli->nombre); 
+                            
+                            ?>
+                    <script>
+                        $("#cliente_cliente_id").val(<?echo $cli->id?>);
+                        </script>
                 </th>
                 <th class="columnasTablaTitulos">DEPARTAMENTO:</th>  
                 <th class="columnasTablaContenido">
-                    <? echo Form::text("tipodepartamento.tipodepartamento_id", "class='combosGeneral ' readonly") ?>
+                    <? 
+                    $mun = new Tipomunicipio();
+                    $mun = $mun->find_first($cli->tipomunicipio_id);
+                    $dep = new Tipodepartamento();
+                    $dep = $dep->find_first($mun->tipodepartamento_id);
+                    echo Form::text("tipodepartamento.tipodepartamento_id", "class='combosGeneral ' readonly",$dep->nombre); 
+                            ?>
                 </th>  
 
             </tr>
@@ -72,10 +90,11 @@
             <tr>
                 <th class="columnasTablaTitulos">MUNICIPIO:</th>  
                 <th class="columnasTablaContenido">
-                    <? echo Form::text("tipomunicipio.tipomunicipio_id", "class='combosGeneral' readonly") ?>
+                    <? echo Form::text("tipomunicipio.tipomunicipio_id", "class='combosGeneral' readonly",$mun->nombre) ?>
                 </th>  
                 <th class="columnasTablaTitulos">DIRECCION:</th>  
                 <th class="columnasTablaContenido" id="direccion_container">
+                    <?echo Form::text("lugartomamuestra", "readonly", $cli->direccion)?>
                 </th>  
 
             </tr>
@@ -91,12 +110,12 @@
                     $var = "style='display: none'";
                     if ($tipocliente_id == 1) {//empopasto
                         ?>
-                        <? echo Form::dbSelect("usuario.usuario_id", "nombrecompleto", array("usuario","getUsuarioTomador"), "Seleccione", "class='combosGeneral' ") ?>
+                        <? echo Form::dbSelect("usuario.usuario_id", "nombrecompleto", array("usuario","getUsuarioTomador"), "Seleccione", "class='combosGeneral' ",$for->usuario_id) ?>
                         <input type="text" name="nuevoTomadorMuestra" id="nuevoTomadorMuestra" <? echo $var ?> value="" class="combosGeneral"/>
 
                     <? } else { ?>
                         <? echo Form::dbSelect("usuario.usuario_id", "nombrecompleto", array("usuario","getUsuarioTomador"), "Seleccione", "class='combosGeneral' $var ") ?>
-                        <input type="text" name="nuevoTomadorMuestra" id="nuevoTomadorMuestra" value="" class="combosGeneral"/>
+                        <input type="text" name="nuevoTomadorMuestra" id="nuevoTomadorMuestra" class="combosGeneral" value="<?echo $for->tomadorexterno?>"/>
                     <? } ?>
 
                 </th>   
@@ -377,12 +396,12 @@
             if (formato_id != 0 && tipocliente_id == 1) {
                 $("#tipomatrizanalizada_tipomatrizanalizada_id").val(1);
                 for (var i = 1; i <= 8; i++) {
-                    AgregarMuestra();
+                    //AgregarMuestra();
                 }
                 ;
                 $("#tipomatrizanalizada_tipomatrizanalizada_id").val(2);
                 for (var i = 1; i <= 3; i++) {
-                    AgregarMuestra();
+                    //AgregarMuestra();
                 }
                 ;
             }
@@ -460,8 +479,8 @@
 
             function AgregarMuestra() {
                 var valorcombo = $("#tipomatrizanalizada_tipomatrizanalizada_id").val();
-                
-                var esconderltm1 ="none";
+
+            var esconderltm1 ="none";
                 var esconderltm2 ="none"
                 if(tipocliente_id==1){
                     esconderltm1="";
@@ -473,7 +492,7 @@
                     esconderltm1 ="none";
                     esconderltm2="";
                 }
-                
+
                 if (iCnt <= 19) {
 
                     iCnt = iCnt + 1;
@@ -509,6 +528,7 @@
                                  </div><div class="clearfix"><div class="col-sm-12 centrar" style="padding-bottom: 2%"><label for="hora">Lugar Toma Muestra</label><div class="col-sm-12"><select style="width: 62%; display: '+esconderltm1+'" id="lugartomamuestra' + iCnt + '"  class="combosGeneralHtml margenDerechacinco">\n\
                                 </select><input class="combosGeneral" style="display: '+esconderltm2+'" type="text" id="lugartomamuestratexto'+iCnt+'"/>\n\
                                 </div></div></div>';
+
 
                     if (valorcombo == 2)
                     {
@@ -709,7 +729,7 @@
 
             $("#btnGrabarMuestras").click(function () {
 
-                var formato_id = "<?php echo $formato_id; ?>";
+                var formato_id = "<?php echo $for->id; ?>";
 
                 if (iCnt == 0) {
                     alert("No se han registrado muestras");
@@ -729,7 +749,6 @@
                                     tipomuestra: $('#tipoMuestra' + i).val(),
                                     codigomuestra: $('#codigoMuestra' + i).val(),
                                     lugarmuestra: $('#lugartomamuestra' + i).val(),
-                                    lugartomamuestratexto: $('#lugartomamuestratexto' + i).val(),
                                     formato_id: formato_id,
                                 };
 
@@ -750,7 +769,7 @@
                         // En data además viene la respuesta del PHP
                         //console.log(data);
                         //window.location = "<?php echo PUBLIC_PATH ?>home/cabecerag/" + formato_id
-                        window.location = "<?php echo PUBLIC_PATH ?>home/accion_usuarios/" + formato_id
+                        window.location = "<?php echo PUBLIC_PATH ?>formato/lista"
                     }).complete(function (data) {
                         //alert("hola");
                     });

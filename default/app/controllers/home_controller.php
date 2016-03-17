@@ -19,7 +19,11 @@ Load::models(
     'tipoensayo',
     'tempformatotipoensayo',
     'tipomuestra',
-        'tomadormuestraaccion'
+        'tomadormuestraaccion',
+        'cliente',
+        'tipomunicipio',
+        'tipodepartamento'
+        
 );
 
 class HomeController extends AppController
@@ -129,6 +133,103 @@ class HomeController extends AppController
 
         
     }
+    
+     function formato_modificar($formato_id)
+    {
+         
+         $this->for = new Formato();
+         $this->for = $this->for->find_first($formato_id);
+        
+        try {
+            
+            $this->tipocliente_id=$this->for->tipocliente_id;
+            
+            //el que viene
+            $this->formato_id = '0';
+            $this->escondergrabar=false;
+           // $this->tipocliente_id = '0';
+
+            //criferlo
+            $xform = new Formato();
+            $anio = date("Y");
+            $xdato = $xform->maximum("codigoinformesecuencial", "conditions: codigoinformeano = '" . $anio . "'") + 1;
+            $this->codigoinforme = "LAT ".$anio."-".$xdato;
+
+            //campos
+            $x7 = Input::post('fechaemision');
+            $x8 = Input::post('observaciones');
+
+            if (Input::hasPost('cliente')) {
+              //combos
+              //$x2 = Input::post('tipocliente');
+              $x3 = Input::post('lugartomamuestra');
+              $x4 = Input::post('empresatomadormuestra');
+              $x5 = Input::post('usuario');
+              $x6 = Input::post('cliente');
+              
+
+              if($this->for->tipocliente_id == 2){//externo
+                  
+                  $formato                           = new Formato();
+                  $formato = $formato->find_first($formato_id);
+                  $formato->tomadorexterno           = Input::post("nuevoTomadorMuestra");                 
+                  $formato->fechaemision             = $x7;
+                  $formato->tipocliente_id           = $_POST['tipocliente_id'];
+                  //$formato->tomadormuestra_id        = $tomadormuestra->id;
+                  $formato->observaciones            = $x8;
+                  $formato->empresatomadormuestra_id = $this->for->tipocliente_id;
+                  $formato->lugartomamuestra      = $x3;
+                  $formato->cliente_id               = $x6['cliente_id'];
+                  $formato->codigoinformeano         =  date('Y');
+                  $formato->codigoinformeleyenda     = "LAT";
+                  $formato->codigoinformesecuencial  = $formato->maximum("codigoinformesecuencial", "conditions: codigoinformeano = '" . $formato->codigoinformeano . "'") + 1;
+
+                if ($formato->update()) {
+                  $this->formato_id     = $formato->id;
+                  $this->tipocliente_id = $formato->getCliente()->tipocliente_id;
+                  Flash::info('Datos actualizados correctamente');
+                  $this->escondergrabar=true;
+                } else {
+                  Flash::error('Ups!! hay un error, intente nuevamente');
+                }
+                 
+              }else{//empopasto
+
+
+                $formato                           = new Formato();
+                $formato = $formato->find_first($formato_id);                
+                $formato->fechaemision             = $x7;
+                $formato->tipocliente_id           = $_POST['tipocliente_id'];
+                $formato->usuario_id        = $x5['usuario_id'];
+                $formato->observaciones            = $x8;
+                $formato->empresatomadormuestra_id = $this->for->tipocliente_id;
+                $formato->lugartomamuestra      = $x3;
+                $formato->cliente_id               = $x6['cliente_id'];
+                $formato->codigoinformeano         =  date('Y');
+                $formato->codigoinformeleyenda     = "LAT";
+                $formato->codigoinformesecuencial  = $formato->maximum("codigoinformesecuencial", "conditions: codigoinformeano = '" . $formato->codigoinformeano . "'") + 1;
+
+                if ($formato->update()) {
+                  $this->formato_id     = $formato->id;
+                  $this->tipocliente_id = $formato->getCliente()->tipocliente_id;
+                  Flash::info('Datos actualizados correctamente');
+                   $this->escondergrabar=true;
+                } else {
+                  Flash::error('Ups!! hay un error, intente nuevamente');
+                }
+
+              }
+
+
+            }
+            
+        } catch (Exception $exc) {
+              Flash::error('Lo sentimos ha ocurrido un error: '.$exc->getTraceAsString());
+              Router::redirect("/home/cabecera");
+        }
+
+        
+    }
 
     function cabecerag($id)
     {
@@ -179,7 +280,7 @@ class HomeController extends AppController
     function seltipoensayo($formato_id)
     {
         $tipensayo        = new Tipoensayo();
-        $this->arr        = $tipensayo->find("id!=49 and id!=50");
+        $this->arr        = $tipensayo->find("id!=49 and id!=50 and id!=23 and id!=9 and id!=30");
         $this->formato_id = $formato_id;
     }
 
@@ -204,7 +305,7 @@ class HomeController extends AppController
         $formato->estado = 1;
         $formato->save();
 
-        Flash::info('Datos grabados correctamente');
+        //Flash::info('Datos grabados correctamente');
         //ahora grabamos los datos temporales que soportan los datos
         Router::redirect("formato/index/$formato_id");
     }
@@ -245,7 +346,7 @@ class HomeController extends AppController
     public function filtrar_clientes()
     {
       $nombre = $_POST["nombre"];
-      $this->clientes = Load::model('cliente')->find("nombre LIKE '%$nombre%'");
+      $this->clientes = Load::model('cliente')->find("nombre LIKE '%$nombre%' and activo=1");
 
       foreach ($this->clientes as $cli) {
         $cli->value        = $cli->id;

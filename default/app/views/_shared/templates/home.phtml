@@ -75,7 +75,16 @@
                                                 ?>
                                                 <?foreach($arrfinal as $i){?>
                                                     <?if($i->id==$opcion->opcionmodulo_id){?>
-                                            <li><?echo Html::link($i->link, $i->nombreopcion)?></li>
+                                            <li><?
+                                            if($opcion->opcionmodulo_id==7)//perfil
+                                            {
+                                                echo Html::link($i->link."/".Session::get("usuario_id"), $i->nombreopcion);
+                                            }else{
+                                                echo Html::link($i->link, $i->nombreopcion);
+                                            }
+                                            
+                                                    
+                                                    ?></li>
                                                     <?}?>    
                                                 <?}?>
                                                

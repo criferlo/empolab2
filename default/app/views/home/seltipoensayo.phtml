@@ -29,6 +29,33 @@
 </div>
 <script>
   $(function() {
+      
+    $("#ensayo13").click(function(e){
+        
+        var estado = $("#ensayo14").prop('checked');
+        if(estado==true){
+            console.log(estado);
+            $("#ensayo14").removeAttr('checked');
+        }else if(estado==false){
+            console.log(estado);            
+            $("#ensayo14").prop('checked','true');
+        }
+       
+    });  
+    
+    $("#ensayo36").click(function(e){
+        
+        var estado = $("#ensayo37").prop('checked');
+        if(estado==true){
+            console.log(estado);
+            $("#ensayo37").removeAttr('checked');
+        }else if(estado==false){
+            console.log(estado);            
+            $("#ensayo37").prop('checked','true');
+        }
+       
+    });  
+      
     $('#sel-todos').click(function(e) {
       e.preventDefault();
       $('input:checkbox').prop('checked', true);

@@ -5,25 +5,27 @@
 </style>
 <div class="container">
     <div class="col-md-12 text-right">
-        
+
         <?
-            $t = new Tomadormuestraaccion();
-            $at = array();
-            $at = $t->find('formato_id='.$formato->id);
-            foreach($at as $atobj){
-                if($atobj->usuario_id==$user->id){
-                    if($atobj->tipoaccion_id==1){?>
-                        
-                        <button id="btnGuardarMemoria" class="btn btn-primary">Guardar memoría</button>
-                    <?}
+        $t = new Tomadormuestraaccion();
+        $at = array();
+        $at = $t->find('formato_id=' . $formato->id);
+        foreach ($at as $atobj) {
+            if ($atobj->usuario_id == $user->id) {
+                if ($atobj->tipoaccion_id == 1) {
+                    ?>
+
+                    <button id="btnGuardarMemoria" class="btn btn-primary">Guardar memoría</button>
+                    <?
                 }
             }
+        }
         ?>
-        
-        
+
+
         <?php //if ($formato->estado > 1 && ($user->tipousuario_id == 1 || $user->tipousuario_id == 3)): ?>
         <!--<button id="btnVistoBno" class="btn btn-success">Dar visto bueno</button>-->
-        <?php //endif ?>
+        <?php //endif  ?>
     </div>
     <h2>Memoria de calculo</h2>
     <ul class="nav nav-tabs">
@@ -244,7 +246,7 @@
                         <? echo Form::close() ?>
 
                         <div class="panel-body" id="editarusuario">
-                            
+
                             <table style="width: 100%">
                                 <tr style="background-color: #A5D6A7">
                                     <th class="thTablasTituloIndex">Revision</th>
@@ -254,7 +256,11 @@
                                 </tr>
                                 <tbody>
                                     <? foreach ($arevisiones as $ar) { ?>
-                                        <tr <?if ($ar->realizado=="N"){echo "class='fuenteroja'";}?>>
+                                        <tr <?
+                                        if ($ar->realizado == "N") {
+                                            echo "class='fuenteroja'";
+                                        }
+                                        ?>>
                                             <td class="thTablasVerdes"><? echo $ar->revision ?></td> 
                                             <td class="thTablasVerdes"><?
                                                 $t = new Usuario();
@@ -262,7 +268,27 @@
                                                 echo $t->nombrecompleto;
                                                 ?></td> 
                                             <td class="thTablasVerdes"><? echo $ar->realizado ?></td>
-                                            <td class="thTablasVerdes"><? echo Html::link("formato/modrevision/$formato->id/$ar->id", "Realizado", "class='btn btn-success'") ?></td>
+                                            <td class="thTablasVerdes">
+                                                <?
+                                                $t = new Tomadormuestraaccion();
+                                                $at = array();
+                                                $at = $t->find('formato_id=' . $formato->id);
+                                                foreach ($at as $atobj) {
+                                                    if ($atobj->usuario_id == $user->id) {
+                                                        if ($atobj->tipoaccion_id == 1) {
+                                                            if ($ar->realizado == "N") {
+                                                                $varbutton = "btn-danger";
+                                                            } else {
+                                                                $varbutton = "btn-success";
+                                                            }
+                                                            echo Html::link("formato/modrevision/$formato->id/$ar->id", "Realizado", "class='btn " . $varbutton . "'");
+                                                        }
+                                                    }
+                                                }
+                                                ?>                            
+
+
+                                            </td>
                                         </tr>
 <? } ?>
                                 </tbody>
@@ -375,10 +401,16 @@ echo 'formato_id=' . $formato->id . ";";
                     ].join(''));
 
                     if (input && tipoEnsayo_id != 2) {
+                        
+                        var res = input.val();
+                        /*if(tipoEnsayo_id==27 || tipoEnsayo_id==15){
+                            res=res/10;
+                        }*/
+                        
                         data = {
                             muestra_id: muestra_id,
                             tipoensayo_id: tipoEnsayo_id,
-                            resultado: input.val()
+                            resultado: res
                         };
                         arrayData.push(data);
                         //}));
@@ -398,25 +430,28 @@ echo 'formato_id=' . $formato->id . ";";
                 url: '<?php echo PUBLIC_PATH ?>memoriarest/',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(arrayData)
+                data: JSON.stringify(arrayData),
+                 beforeSend: function () {
+                    $(".container").html("<img src='<?echo PUBLIC_PATH."img/loader.gif"?>'/>Espere un momento...");
+                },
             }).done(function (data)
             {
-                alert("Datos enviados con éxito");
+                //alert("Datos enviados con éxito");
                 //window.location = "formato/modificar/" + formato_id;
             }).complete(function (data) {
                 //alert("hola");
                 /*if (<?php echo $formato->estado ?> == 1) {
-                    $.ajax({
-                        url: "<?php echo PUBLIC_PATH ?>formato/actualizar_estado",
-                        method: 'POST',
-                        data: {
-                            formato_id: "<?php echo $formato->id ?>",
-                            usuario_id: "<?php echo $user->id ?>",
-                            tipousuario_id: "<?php echo $user->tipousuario_id ?>"
-                        }
-                    });
-                }
-                ;*/
+                 $.ajax({
+                 url: "<?php echo PUBLIC_PATH ?>formato/actualizar_estado",
+                 method: 'POST',
+                 data: {
+                 formato_id: "<?php echo $formato->id ?>",
+                 usuario_id: "<?php echo $user->id ?>",
+                 tipousuario_id: "<?php echo $user->tipousuario_id ?>"
+                 }
+                 });
+                 }
+                 ;*/
                 alert("Datos enviados con éxito");
                 window.location = "../modificar/" + formato_id;
             });

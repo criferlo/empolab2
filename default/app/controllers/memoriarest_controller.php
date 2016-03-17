@@ -16,8 +16,10 @@ class MemoriarestController extends RestController {
     //put your code here
     public function post(){
         $this->data = $this->param();
+        $muestra_id ="";
         foreach ($this->data as $ms)
         {
+            $muestra_id=$ms['muestra_id'];
             $mmc = new Muestramemoriacalculo();
 
             $mmc->muestra_id    = $ms['muestra_id'];
@@ -31,6 +33,12 @@ class MemoriarestController extends RestController {
 
             $mmc->save();
         }
+        $mu = new Muestra();
+        $mu = $mu->find_first($muestra_id);
+        $for = new Formato();
+        $for = $for->find_first($mu->formato_id);
+        $for->estado=="1";
+        $for->update();
     }
 
     public function delete($id){

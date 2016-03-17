@@ -1,64 +1,66 @@
 
 
+<div id="cargando" style="display: none"><? echo Html::img("loader.gif") ?>
+        </div>
 
-<div class="container">
-    <div class="col-md-1 pull-right">
-        <button id="btnGuardarMemoria" class="btn btn-primary pull-right">Guardar memoría</button>
-    </div>
-    <h2>Memoria de calculo</h2>
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#datos">Datos</a></li>
-        <li><a href="#memoria">Memoria de calculo</a></li>
-    </ul>
-
-
-    <div class="tab-content">
-        <div id="datos" class="tab-pane fade in active">
-            <br>
-            <!-- Datos de muestras -->
-            <div class="row">
-                <div class="col-md-12">
-                    <?php foreach ($formato->getTempformatotipoensayo() as $te): ?>
-                        <?php
-                        if ($te->tipoensayo_id != 2 && $te->tipoensayo_id != 46 &&
-                                $te->tipoensayo_id != 3 && $te->tipoensayo_id != 22 &&
-                                $te->tipoensayo_id != 20 && $te->tipoensayo_id != 49 &&
-                                $te->tipoensayo_id != 8 && $te->tipoensayo_id != 50):
-                            ?>
+    <div class="container">
+        <div class="col-md-1 pull-right">
+            <button id="btnGuardarMemoria" class="btn btn-primary pull-right">Guardar memoría</button>
+        </div>
+        <h2>Memoria de calculo</h2>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#datos">Datos</a></li>
+            <li><a href="#memoria">Memoria de calculo</a></li>
+        </ul>
 
 
-                            <div class="panel panel-primary">
-                                <div class="panel-heading"><?php echo $te->getTipoensayo()->nombre ?></div>
-                                <div class="panel-body">
-                                    <table class="table table-tipo-ensayo" data-tipo-ensayo="<?php echo $te->id; ?>">
-                                        <tbody>
-                                            <tr>
-                                                <?php foreach ($identMuestra as $index => $ident): ?>
-                                                    <td>
-                                                        <? echo "Muestra" . $ident ?>  
-                                                        <?php
-                                                        $idMuestra = $muestras[$index]->id;
-                                                        $idTipoEnsayo = $te->getTipoensayo()->id;
-                                                        echo Form::number(
-                                                                "Campo_" . $idTipoEnsayo . "_" . $ident, "class='form-control fullwidth acidez-input' data-muestra_id='$idMuestra' data-tipo_id='$idTipoEnsayo' placeholder='Muestra $ident'"
-                                                        )
-                                                        ?>
-                                                    </td>
-                                                <?php endforeach ?>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+        <div class="tab-content">
+            <div id="datos" class="tab-pane fade in active">
+                <br>
+                <!-- Datos de muestras -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <?php foreach ($formato->getTempformatotipoensayo() as $te): ?>
+                            <?php
+                            if ($te->tipoensayo_id != 2 && $te->tipoensayo_id != 46 &&
+                                    $te->tipoensayo_id != 3 && $te->tipoensayo_id != 22 &&
+                                    $te->tipoensayo_id != 20 && $te->tipoensayo_id != 49 &&
+                                    $te->tipoensayo_id != 8 && $te->tipoensayo_id != 50):
+                                ?>
+
+
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading"><?php echo $te->getTipoensayo()->nombre ?></div>
+                                    <div class="panel-body">
+                                        <table class="table table-tipo-ensayo" data-tipo-ensayo="<?php echo $te->id; ?>">
+                                            <tbody>
+                                                <tr>
+                                                    <?php foreach ($identMuestra as $index => $ident): ?>
+                                                        <td>
+                                                            <? echo "Muestra" . $ident ?>  
+                                                            <?php
+                                                            $idMuestra = $muestras[$index]->id;
+                                                            $idTipoEnsayo = $te->getTipoensayo()->id;
+                                                            echo Form::number(
+                                                                    "Campo_" . $idTipoEnsayo . "_" . $ident, "class='form-control fullwidth acidez-input' data-muestra_id='$idMuestra' data-tipo_id='$idTipoEnsayo' placeholder='Muestra $ident'"
+                                                            )
+                                                            ?>
+                                                        </td>
+                                                    <?php endforeach ?>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
 
-                        <?php endif ?>
-                    <?php endforeach ?>
+                            <?php endif ?>
+                        <?php endforeach ?>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Fin Datos de muestras -->
-        <div id="memoria" class="tab-pane fade">
-            <?php //foreach ($formato->getTempformatotipoensayo() as $te) { ?>
+            <!-- Fin Datos de muestras -->
+            <div id="memoria" class="tab-pane fade">
+                <?php //foreach ($formato->getTempformatotipoensayo() as $te) { ?>
                 <br>
 
 
@@ -200,38 +202,37 @@
                     </div>
                 </div>
 
-            <? //} ?>
+                <? //} ?>
+            </div>
         </div>
-    </div>
-</div>
+
 
 <script>
     $(document).ready(function () {
         var memoriaCalculo = [2, 46, 3, 22, 20, 49, 8, 50];
         var tipoEnsayo = [];
         var muestras_ids = [];
-        var formato_id=0;
+        var formato_id = 0;
 <?php
-
-$arrt = array(2,46,3,22,20,5,21,29,8,50);
+$arrt = array(2, 46, 3, 22, 20, 5, 21, 29, 8, 50);
 
 foreach ($formato->getTempformatotipoensayo() as $te) {
-    $ban=0;
-    foreach($arrt as $d){
-        if($d==$te->tipoensayo_id){
-           $ban=1;
-           break;
+    $ban = 0;
+    foreach ($arrt as $d) {
+        if ($d == $te->tipoensayo_id) {
+            $ban = 1;
+            break;
         }
     }
-    if($ban==0){
+    if ($ban == 0) {
         echo 'tipoEnsayo.push(' . $te->tipoensayo_id . ');';
-    }    
+    }
 }
 foreach ($muestras as $mst) {
     echo 'muestras_ids.push(' . $mst->id . ');';
 }
 
-echo 'formato_id='.$formato->id.";";
+echo 'formato_id=' . $formato->id . ";";
 ?>
 
         //console.log(tipoEnsayo);
@@ -260,7 +261,7 @@ echo 'formato_id='.$formato->id.";";
                 GenerateJsonDurezaMagnesio,
                 GenerateJsonMagnesio
             ];
-           
+
             arrayData = [];
             muestras_ids.forEach(function (muestra_id) {
                 tipoEnsayo.forEach(function (tipoEnsayo_id) {
@@ -271,42 +272,52 @@ echo 'formato_id='.$formato->id.";";
                         tipoEnsayo_id, ']'
                     ].join(''));
 
-                    if (input && tipoEnsayo_id != 2) {                        
+                    if (input && tipoEnsayo_id != 2) {
+
+                        var res = input.val();
+                        if (tipoEnsayo_id == 27 || tipoEnsayo_id == 15) {
+                            res = res / 10;
+                        }
+
                         data = {
                             muestra_id: muestra_id,
                             tipoensayo_id: tipoEnsayo_id,
-                            resultado: input.val()
+                            resultado: res
                         };
                         arrayData.push(data);
                         //}));
                     }
                 });
 
-                functions.forEach(function (fn) {                   
-                    data = 
-                        fn(muestra_id)
-                    ;
+                functions.forEach(function (fn) {
+                    data =
+                            fn(muestra_id)
+                            ;
+                    console.log(data);
                     arrayData.push(data);
                     //}));
                 });
-                
+
             });
-            
+
             $.ajax({
                 url: '<?php echo PUBLIC_PATH ?>memoriarest/',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(arrayData)
+                data: JSON.stringify(arrayData),
+                beforeSend: function () {
+                    $(".container").html("<img src='<?echo PUBLIC_PATH."img/loader.gif"?>'/>Espere un momento...");
+                },
             }).done(function (data)
-            {                
-                alert("Datos enviados con éxito");
+            {
+                //alert("Datos enviados con éxito");
                 //window.location = "formato/modificar/" + formato_id;
             }).complete(function (data) {
-                        //alert("hola");
-                        alert("Datos enviados con éxito");
-                        window.location = "../modificar/" + formato_id;
-                        
-                    });
+                //alert("hola");
+                alert("Datos enviados con éxito");
+                window.location = "../modificar/" + formato_id;
+
+            });
         });
     });
 </script>

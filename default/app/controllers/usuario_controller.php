@@ -20,12 +20,11 @@ Class UsuarioController extends AppController {
             if ($textoBusqueda != "") {
                 //IDENTIFICACION
                 if ($comboBusqueda == 0) {
-                    if(is_numeric($textoBusqueda)) {
+                    if (is_numeric($textoBusqueda)) {
                         $this->usuarios = $objeto->find("cedula=$textoBusqueda");
-                    }else{
-                        Flash::error("La Cédula debe ser de tipo numérico"); 
+                    } else {
+                        Flash::error("La Cédula debe ser de tipo numérico");
                     }
-                    
                 }//APELLIDO
                 else if ($comboBusqueda == 1) {
                     $this->usuarios = $objeto->find("nombrecompleto like '%$textoBusqueda%' ");
@@ -37,7 +36,6 @@ Class UsuarioController extends AppController {
     }
 
     function nuevo() {
-
         $objeto = new Usuario();
         $this->usuarios = array();
 
@@ -56,6 +54,36 @@ Class UsuarioController extends AppController {
                 $usuario->tipousuario_id = $tipousuario["tipousuario_id"];
 
                 if ($usuario->save()) {
+
+
+                    //grabar permisos de administrador
+                    if ($usuario->tipousuario_id == 5) {
+                        $arrmodulos = array();
+                        $objmod = new Modulo();
+                        $arrmodulos = $objmod->find();
+                        foreach ($arrmodulos as $i1) {
+                            if ($i1->id != 4) {//diferente de invitado
+                                $usum = new Usuariomodulo();
+                                $usum->modulo_id = $i1->id; //sesion
+                                $usum->usuario_id = $usuario->id;
+                                $usum->save();
+                            }
+                        }
+
+                        $arropcion = array();
+                        $objop = new Opcionmodulo();
+                        $arropcion = $objop->find();
+                        foreach ($arropcion as $j1) {
+                            if ($j1->modulo_id != 4) {//diferente de invitado
+                                $usuo = new Usuarioopcion();
+                                $usuo->opcionmodulo_id = $j1->id;
+                                $usuo->usuario_id = $usuario->id;
+                                $usuo->save();
+                            }
+                        }
+                    }
+                    //fin grabar permsisos de adminsitrador
+
                     $this->usuario_id = $usuario->id;
                     Flash::info("Datos grabados correctamente");
                     Router::redirect("usuario/index");
@@ -92,34 +120,30 @@ Class UsuarioController extends AppController {
                     $bandera = 1;
                 }
             }
-             if($bandera==0){
+            if ($bandera == 0) {
 
-            for ($i = 0; $i < $numero2 - 1; $i++) {
+                for ($i = 0; $i < $numero2 - 1; $i++) {
 
-                $temp = new Usuariomodulo();
-                $temp->modulo_id = $valores2[$i];
-                $temp->usuario_id = $idusuario;
-                $temp->save();
-            }
+                    $temp = new Usuariomodulo();
+                    $temp->modulo_id = $valores2[$i];
+                    $temp->usuario_id = $idusuario;
+                    $temp->save();
+                }
 
-            if ($temp->save()) {
-                Flash::info("Modulos guardados");
-                Router::redirect("usuario/modificarperfil/" . $idusuario);
+                if ($temp->save()) {
+                    Flash::info("Modulos guardados");
+                    Router::redirect("usuario/modificarperfil/" . $idusuario);
+                } else {
+                    Flash::info("Ups!! hay un error, intente nuevamente");
+                }
             } else {
-                Flash::info("Ups!! hay un error, intente nuevamente");
-            }
-            
-            }
-            
-            else{
                 Flash::error("Algunos modulos ya estan asignados. Intente de nuevo");
             }
-
         }
     }
 
     function eliminarmodulousuario($idmodulo) {
-        
+
         $objeto = new Usuariomodulo();
         $objeto->find_first($idmodulo);
         if ($objeto->delete($objeto->id)) {
@@ -215,25 +239,25 @@ Class UsuarioController extends AppController {
     }
 
     function eliminar($idusuario) {
-        
+
         try {
-            
+
             //Consultamos y Eliminamos los modulos que tiene asignado el usuario
             $objeto = new Usuariomodulo();
-            $this->Usuariomodulo = array(); 
+            $this->Usuariomodulo = array();
             $this->Usuariomodulo = $objeto->find("usuario_id=$idusuario");
-            
-            foreach ($this->Usuariomodulo  as $usuModulo) {
+
+            foreach ($this->Usuariomodulo as $usuModulo) {
                 //Flash::error("ID USUARIO: $idusuario  OPCION: ".$usuModulo->id);
                 $objeto->delete("id=$usuModulo->id");
             }
-            
+
             //Consultamos y eliminamos las opciones que tiene asignado el usuario
             $objeto2 = new Usuarioopcion();
-            $this->Usuarioopcion = array(); 
+            $this->Usuarioopcion = array();
             $this->Usuarioopcion = $objeto2->find("usuario_id=$idusuario");
-            
-            foreach ($this->Usuarioopcion  as $usuOpcion) {
+
+            foreach ($this->Usuarioopcion as $usuOpcion) {
                 //Flash::error("ID USUARIO: $idusuario  OPCION: ".$usuOpcion->id);
                 $objeto2->delete("id=$usuOpcion->id");
             }
@@ -247,17 +271,11 @@ Class UsuarioController extends AppController {
                 Flash::info("Todos los registros del usuario se han eliminado");
                 Router::redirect('/usuario/index');
             }
-            
         } catch (Exception $exc) {
             Flash::error("El usuario no puede ser eliminado por que tiene informacion importante relacionada.");
             //Flash::error("Ocurrio un error al intentar eliminar el registro.");
             Router::redirect('/usuario/index');
         }
-
-
-
-
-        
     }
 
 }

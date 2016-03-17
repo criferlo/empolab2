@@ -29,6 +29,7 @@ class CabecerarestController extends RestController {
             $muestra->tipomuestra_id = $ms['tipomuestra'];
             $muestra->codigomuestra = $ms['codigomuestra'];
             $muestra->lugartomamuestra_id = $ms['lugarmuestra'];
+            $muestra->lugartomamuestratexto = $ms['lugartomamuestratexto'];
             $muestra->formato_id = $ms['formato_id'];
             $muestra->save();
         }

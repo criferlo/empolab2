@@ -76,12 +76,12 @@ div.autocomplete ul li {
 {
     width: 96%; 
     margin-left: 18px; 
-    border: 1px solid #f0ff00;
+    border: 1px solid #00468C;
 }
 
 .panel-default>.panel-heading.tituloPanelQueja
 {
-    background-color: #f0ff00;
+    background-color: #00458C;
     color: #FFF;
 }
 

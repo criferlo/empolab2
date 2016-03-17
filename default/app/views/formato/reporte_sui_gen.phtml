@@ -10,8 +10,21 @@ function UbicarFilaTipoEnsayo($sheet, $tipoEnsayo)
   return null;
 }
 
-function cargarReportesDia($formato)
+function cargarReportesDia($formato, $formatos)
 {
+  foreach ($formatos as $ft) {
+    $reportPath = 'reportes/formato_'.$ft->id.'.xlsx';
+
+    if (file_exists($reportPath)) {
+      $titulo = explode('-', $ft->fechaemision)[2] + 0;
+      $reporteExcel = PHPExcel_IOFactory::load($reportPath);
+      $reporteExcel->getActiveSheet()->setTitle("$titulo");
+
+      // $reporteExcel->setActiveSheet(0);
+
+      $formato->addExternalSheet($reporteExcel->getActiveSheet());
+    }
+  }
   return $formato;
 }
 
@@ -82,7 +95,7 @@ function generarResumen($book)
 
   for ($i=1; $i <=31 ; $i++) {
     if ($book->sheetNameExists("$i")) {
-      $currentSheet = $book->getSheet($i + 3);
+      $currentSheet = $book->getSheetByName("$i");
       $dia          = $currentSheet->getTitle();
 
       calcularPromedio($book->getSheet(0), "Q", "T", $i);
@@ -106,6 +119,8 @@ function generarResumen($book)
       }
     }
   }
+
+  $book->setActiveSheetIndex(0);
 }
 ?>
 
@@ -132,7 +147,7 @@ $objPHPExcel->getDefaultStyle()->getFont()
 $newSheet = $objPHPExcel->getActiveSheet();
 // $newSheet->setTitle($codigo);
 
-$book = cargarReportesDia($objPHPExcel);
+$book = cargarReportesDia($objPHPExcel, $formatos);
 generarResumen($book);
 
 $nombre = 'promedios/promedio.xlsx';
